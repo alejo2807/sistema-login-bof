@@ -22,8 +22,8 @@ class SistemaLogin {
         bool verificarArchivo(); //verifica si el archivo de usuarios existe. TRUE si existe, FALSE si no existe.
         bool crearArchivo(); //crea el archivo de usuarios si no existe
 
-        bool cargarUsuariosDesdeArchivo(); // Carga los usuarios desde el archivo
-        void guardarUsuarioEnArchivo(const Usuario& usuario); // Guarda un usuario en el archivo
+        bool cargarUsuariosDesdeArchivo(); 
+        void guardarUsuarioEnArchivo(const Usuario& usuario);
         string hashContrasena(string pass); //retornara la contraseña hasheada
 
     public:
