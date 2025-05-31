@@ -15,7 +15,7 @@ class SistemaLogin {
 
 		// Atributos (usaremos un map para almacenar usuarios y hashes de contraseñas)
 		//Ademas, la idea es practicar con los maps, porque nunca los he usado.
-		map<string, Usuario*> usuarios; // usamos un punter a Usuario para  no tener que copiar todo el objeto Usuario
+		map<string, Usuario*> usuarios; // usamos un puntero a Usuario para  no tener que copiar todo el objeto Usuario
 		Usuario* usuarioActivo; // Puntero al usuario actualmente conectado
 
 		//funciones privadas. No nos interesa que sean accesibles desde fuera de la clase.
