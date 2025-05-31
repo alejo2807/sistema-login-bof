@@ -25,10 +25,10 @@ bool Usuario::verificarContrasena(string contrasena) const
 
 string Usuario::getNombreCompleto() const
 {
-    return string();
+    return nombreCompleto;
 }
 
 string Usuario::getNombreUsuario() const
 {
-    return string();
+    return nombreUsuario;
 }
