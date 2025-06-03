@@ -42,7 +42,7 @@ bool SistemaLogin::crearArchivo()
 
 
 
-void SistemaLogin::parseFile()
+void SistemaLogin::parseFile(string& filename)
 {
 
 	//usaremos el mapa para almacenar los usuarios de nuestra clase SistemaLogin

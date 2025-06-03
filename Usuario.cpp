@@ -3,13 +3,11 @@
 #include <string>
 using namespace std;
 
-//correcion del constructor de Usuario. 
-// Antes, el constructor no inicializaba hashContrasena correctamente,
-//(Lo tenia como hashContrasena = "";) lo cual no es correcto.
+
 Usuario::Usuario(string nombreCompleto, string nombreUsuario, string email, string NumeroTelefono, string hashContrasena) 
 	:	nombreCompleto(nombreCompleto), 
 		nombreUsuario(nombreUsuario),
-		email(email),
+		emailUsuario(email),
 		numeroTelefono(NumeroTelefono),
 		hashContrasena(hashContrasena){}
 
@@ -41,7 +39,7 @@ string Usuario::getNombreUsuario() const
 
 string Usuario::getEmail() const
 {
-	return email;
+	return emailUsuario;
 }
 
 string Usuario::getNumeroTelefono() const
