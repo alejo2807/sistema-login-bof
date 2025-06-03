@@ -40,6 +40,8 @@ bool SistemaLogin::crearArchivo()
 	
 }
 
+
+
 void SistemaLogin::parseFile()
 {
 
@@ -168,7 +170,6 @@ SistemaLogin::SistemaLogin()
 		crearArchivo();
 	}
 
-	cargarUsuariosDesdeArchivo(); // Cargar usuarios desde el archivo al iniciar el sistema
 }
 
 

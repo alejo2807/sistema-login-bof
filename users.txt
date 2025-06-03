@@ -1,0 +1,8 @@
+//esto sera un comentario
+//la base de datos original, debera ser en el siguiente formato:
+//nombreCompleto, nombreUsuario, hashContrasena
+
+
+Juan Pablo Perez, juanggx, juanperez@gmail.com, 322 3478980, xdddddd
+Andrea Camila Solarte, camilag21, camisolarte@gmail.com, 321 2981271, ajsjskjs
+Maria Ortiz, maryvx, mariaortiz21@gmail.com, 317 2323390, 217h2s

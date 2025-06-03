@@ -13,6 +13,9 @@ Usuario::Usuario(string nombreCompleto, string nombreUsuario, string email, stri
 		numeroTelefono(NumeroTelefono),
 		hashContrasena(hashContrasena){}
 
+Usuario::Usuario()
+{
+}
 
 bool Usuario::verificarContrasena(string contrasena) const
 {

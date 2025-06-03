@@ -16,6 +16,7 @@ class Usuario {
 		string hashContrasena;
 	
 	public:
+		Usuario(); // Constructor por defecto
 		Usuario(string nombreCompleto, string nombreUsuario, string email, 
 				string numeroTelefono, string hashContrasena);
 		bool verificarContrasena(string contrasena) const;
