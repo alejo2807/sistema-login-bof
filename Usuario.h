@@ -11,7 +11,7 @@ class Usuario {
 	private:
 		string nombreCompleto;
 		string nombreUsuario;
-		string email;
+		string emailUsuario;
 		string numeroTelefono;
 		string hashContrasena;
 	
@@ -26,6 +26,14 @@ class Usuario {
 		string getNombreUsuario() const;
 		string getEmail() const;
 		string getNumeroTelefono() const;
+		string getHashContrasena() const { return hashContrasena; } // Getter para el hash de la contraseña
+		
+		// Setters
+		void setNombreCompleto(const string& nombre) { nombreCompleto = nombre; }
+		void setNombreUsuario(const string& usuario) { nombreUsuario = usuario; }
+		void setEmail(const string& email) { emailUsuario = email; }
+		void setNumeroTelefono(const string& telefono) { numeroTelefono = telefono; }
+		void setHashContrasena(const string& hash) { hashContrasena = hash; }
 
 };
 
