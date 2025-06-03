@@ -22,14 +22,15 @@ class SistemaLogin {
 		bool verificarArchivo(); //verifica si el archivo de usuarios existe. TRUE si existe, FALSE si no existe.
 		bool crearArchivo(); //crea el archivo de usuarios si no existe
 
-		void parseFile(string& filename); //1. the file to load users into the map
+		//funciones que se encargan de parsear el archivo de usuarios
+		// y guardar los usuarios en el mapa
+		bool parseFile(string& filename); //1. the file to load users into the map
 		bool parseLine(string& LineaDondeEstoy, Usuario& user); //2.parses a line from the file to create a Usuario object
-		bool guardarAlMapa(const Usuario& user, Usuario* ptrUsu); //3. saves the user to the map
-		void mostrarInformacionUsuarios(map<string, Usuario*>& usuariosRef) const; //4. shows the user information
-		void eliminarInformacionDelMap(map<string, Usuario*>& usuariosRef); //5. deletes a user from the map
+		bool guardarAlMapa(Usuario* nuevoUsuario); //3. saves the user to the map
+		void mostrarInformacionUsuarios() const; //4. shows the user information
+		void eliminarInformacionDelMap(); //5. deletes a user from the map
 		
-		
-		
+		//falta hash contrasena y funciones publicas
 		string hashContrasena(string pass); //retornara la contraseña hasheada
 
 	public:
