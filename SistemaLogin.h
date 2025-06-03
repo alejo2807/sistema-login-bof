@@ -24,9 +24,9 @@ class SistemaLogin {
 
 		void parseFile(string& filename); //1. the file to load users into the map
 		bool parseLine(string& LineaDondeEstoy, Usuario& user); //2.parses a line from the file to create a Usuario object
-		bool guardarAlMapa(const Usuario& user); //3. saves the user to the map
+		bool guardarAlMapa(const Usuario& user, Usuario* ptrUsu); //3. saves the user to the map
 		void mostrarInformacionUsuarios(map<string, Usuario*>& usuariosRef) const; //4. shows the user information
-		void eliminarUsuarios(map<string, Usuario*>& usuariosRef); //5. deletes a user from the map
+		void eliminarInformacionDelMap(map<string, Usuario*>& usuariosRef); //5. deletes a user from the map
 		
 		
 		
