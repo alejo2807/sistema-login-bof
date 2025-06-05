@@ -1,14 +1,3 @@
-// formato del archivo users.txt:
-//nombreCompleto,nombreUsuario,hashContrasena (mini base de datos)
-
-
-
-//SE HACE UNA REESTRUCTURACION DEL CODIGO DE TODO EL PROYECTO:
-//ahora hay 2 clases, SistemaLogin y Usuario, y se implementa un sistema de login básico.
-
-
-//vamos a hacer un intento de leer y parsear el archivo de usuarios
-
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -16,8 +5,23 @@
 #include <vector>
 #include <map> //para usar map
 #include "Usuario.h" // Asegúrate de incluir el archivo Usuario.h
+
+//para el algoritmo de criptografia bcrypt (hashear contrasena)
+#include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
+
 using namespace std;
 
 
-int main(){}
+int main()
+{
+	//ejemplo de hash con bcrypt
+	std::string password = "password123";
+	std::string hash = BCrypt::generateHash(password, 12);
+	std::cout << "Hashed: " << hash << std::endl;
+
+	bool isValid = BCrypt::validatePassword(password, hash);
+	std::cout << "Valid? " << (isValid ? "YES" : "NO") << std::endl;
+	return 0;
+	
+}
 
