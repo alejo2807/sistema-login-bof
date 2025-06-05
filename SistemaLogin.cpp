@@ -40,57 +40,59 @@ bool SistemaLogin::crearArchivo()
 	
 }
 
-bool SistemaLogin::parseFile(string &filename)
+bool SistemaLogin::parseFile(const string &filename)
 {
-	//usaremos el mapa para almacenar los usuarios de nuestra clase SistemaLogin
-	// Se deja comentado para recordar la estructura map<string, Usuario*> usuarios;
-	
 	//lo comento porque ya esta creado el archivo users.txt (ofstream recibe filename)
 	//std::ofstream nuevoArchivo(filename);
 	//nuevoArchivo.close();
 	
 	// Intentamos abrir el archivo para leer
+	//si no se pudo abrir, retornamos falso
 	std::ifstream miArchivo(filename);
-	if (miArchivo.is_open()) 
-	{
-		cout << "El archivo se ha abierto correctamente." << endl;
-		string line;
-		
-		while (getline(miArchivo, line)) 
-		{
-			// Saltar líneas vacías o comentarios
-			if (line.empty() || line.find("/") == 0) continue; 
-			
-			Usuario* userPtr = new Usuario(); // Crear un nuevo objeto Usuario para cada línea
-			
-			if (parseLine(line, *userPtr)) 
-			{
-				if(guardarAlMapa(userPtr)) return true; // Si se pudo guardar el usuario, retornar true
-				
-				else
-				{
-					cerr << "Error al guardar el usuario "<< endl;
-					delete userPtr; // Si no se pudo guardar, liberar memoria
-				}
-				
-			} 
-			else 
-			{
-				cerr << "Error al parsear la línea: " << line << endl;
-				delete userPtr; // Liberar memoria si no se pudo parsear correctamente
-			}
-		}
-		miArchivo.close(); // Cerrar el archivo después de leer
-	} 
-	
-	else 
+	if (!miArchivo.is_open()) 
 	{
 		cerr << "No se pudo abrir el archivo." << endl;
 		return false; 
+	} 
+
+	string line;
+	bool success;
+	while (getline(miArchivo, line)) 
+	{
+		// Saltar líneas vacías o comentarios
+		if (line.empty() || line.find("/") == 0) continue; 
+		
+		Usuario* userPtr = new Usuario(); // Crear un nuevo objeto Usuario para cada línea
+		
+		if (parseLine(line, *userPtr)) 
+		{
+			if(guardarAlMapa(userPtr)) 
+			{
+				// Si se pudo guardar el usuario, retornar true en success
+				success = true;
+			} 
+			
+			else
+			{
+				cerr << "Error al guardar el usuario "<< endl;
+				delete userPtr; // Si no se pudo guardar, liberar memoria y retonar false en success
+				success = false;
+			}
+			
+		} 
+		else 
+		{
+			cerr << "Error al parsear la línea: " << line << endl;
+			delete userPtr; // Liberar memoria si no se pudo parsear correctamente
+			success = false;
+		}
 	}
+	
+	miArchivo.close(); // Cerrar el archivo después de leer
+	return success;
 }
 
-bool SistemaLogin::parseLine(string &LineaDondeEstoy, Usuario &user)
+bool SistemaLogin::parseLine(const string &LineaDondeEstoy, Usuario &user)
 {
 	
 	//creamos un stringstream a partir de la línea leída (es como el dispensador de dulces del cual extraemos los dulces (datos))
@@ -164,6 +166,30 @@ bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
 }
 
 
+
+
+////////////////////////////////////////////////////////////////
+
+
+SistemaLogin::SistemaLogin()
+{
+	if(verificarArchivo()) {cout << "Archivo de usuarios encontrado." << endl;} 
+
+	else {
+		cout << "Archivo de usuarios no encontrado. Creando uno nuevo..." << endl;
+		crearArchivo();
+	}
+
+}
+
+//implementacion del destructor y cambios, de priv a public mostrar info y eliminar info
+SistemaLogin::~SistemaLogin()
+{
+	//como la funcion es de la misma clase, tiene acceso a la variable privada original
+	//entonces le pasamos el mapa como parametro a la funcion eliminarInfoDelMap.
+	eliminarInformacionDelMap(); 
+}
+
 void SistemaLogin::mostrarInformacionUsuarios() const
 {
 	
@@ -201,20 +227,3 @@ void SistemaLogin::eliminarInformacionDelMap()
 	usuarios.clear(); 
 	cout << "Todos los usuarios han sido eliminados." << endl;	
 }
-
-
-////////////////////////////////////////////////////////////////
-
-
-SistemaLogin::SistemaLogin()
-{
-	if(verificarArchivo()) {cout << "Archivo de usuarios encontrado." << endl;} 
-
-	else {
-		cout << "Archivo de usuarios no encontrado. Creando uno nuevo..." << endl;
-		crearArchivo();
-	}
-
-}
-
-
