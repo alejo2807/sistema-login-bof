@@ -4,6 +4,9 @@
 #include <map> 
 #include <fstream> // Para manejar archivos, usamos ifstream y ofstream
 #include <sstream> // Para usar stringstream
+
+//para el algoritmo de criptografia bcrypt (hashear contrasena)
+#include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
 using namespace std;
 
 
@@ -165,8 +168,11 @@ bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
 	
 }
 
-
-
+string SistemaLogin::hashContrasena(string password)
+{
+	std::string hash = BCrypt::generateHash(password, 12);
+	return hash;
+}
 
 ////////////////////////////////////////////////////////////////
 

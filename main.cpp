@@ -1,14 +1,6 @@
-#include <fstream>
-#include <iostream>
 #include <string>
-#include <sstream> //to use stringstream
-#include <vector>
-#include <map> //para usar map
-#include "Usuario.h" // Asegúrate de incluir el archivo Usuario.h
+#include "Usuario.h" 
 #include "SistemaLogin.h"
-
-//para el algoritmo de criptografia bcrypt (hashear contrasena)
-#include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
 
 using namespace std;
 
@@ -34,9 +26,18 @@ int main()
 	cout<< "Contrasena: " <<endl;
 	getline(cin, password);
 	
-	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
-	SistemaLogin sistema;
+	//COMPILO CON ESTE COMANDO:
+	//g++ main.cpp Usuario.cpp SistemaLogin.cpp libbcrypt/src/*.c -Ilibbcrypt/include -o ap
+
 	
+	
+	SistemaLogin sistema;
+	string hash = sistema.hashContrasena(password);
+	
+	//se le pasan los parametros al usuario creado en la heap
+	//el ultimo parametro no es la contrasena, sino el hash de la misma
+	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, hash);
+
 	if(sistema.registrarUsuario("users.txt", nombreUser, nuevoUsuarioPrueba))
 	{
 		sistema.parseFile("users.txt");

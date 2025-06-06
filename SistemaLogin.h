@@ -28,11 +28,12 @@ class SistemaLogin {
 		
 		
 		//falta hash contrasena y funciones publicas
-		string hashContrasena(string pass); //retornara la contraseña hasheada
+		
 
 	public:
 		SistemaLogin();
 		~SistemaLogin();
+		string hashContrasena(string password); //retornara la contraseña hasheada
 		
 		//funciones  sobre el archivo y el mapa
 		bool parseFile(const string& filename); // parses the file to load users into the map
