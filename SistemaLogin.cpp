@@ -188,6 +188,8 @@ SistemaLogin::~SistemaLogin()
 	//como la funcion es de la misma clase, tiene acceso a la variable privada original
 	//entonces le pasamos el mapa como parametro a la funcion eliminarInfoDelMap.
 	eliminarInformacionDelMap(); 
+	cout << "Todos los usuarios han sido eliminados." << endl;	
+
 }
 
 void SistemaLogin::mostrarInformacionUsuarios() const
@@ -225,5 +227,49 @@ void SistemaLogin::eliminarInformacionDelMap()
 	//Se elimina los nombres de usuario (strings)
 	//Se eliminan los punteros a los objetos Usuario, que viven en la stack
 	usuarios.clear(); 
-	cout << "Todos los usuarios han sido eliminados." << endl;	
+}
+
+bool SistemaLogin::registrarUsuario(const string& filename, const string& username, Usuario* nuevoUsuario)
+{
+	std::ofstream archivoCambiado(filename, ios::app);
+	
+	if(!archivoCambiado.is_open())
+	{
+		cerr << "No se pudo abrir el archivo" <<endl;
+		return false;
+	}
+	
+	//variable para medir si la funcion es exitosa o no
+	//se retorna al final, ya que toda funcion booleana debe retorna algo al final
+	//(incluso si no es booleana, con que NO sea void, debe retornar algo)
+	bool success;
+	
+	string searchUsername = nuevoUsuario->getNombreUsuario();
+	// .find() devuelve un puntero(iterador) que apunta al nombre de usuario encontrado
+	auto it = usuarios.find(searchUsername);
+	
+	// .end() devuelve un puntero (iterador) que apunta al ultimo objeto + 1 posicion,
+	// tecnicamente .end() es una posicion que no existe en el mapa
+	//por lo que, la comparacion es que si it es diferente a usuarios.end()
+	// eso significa que si ha sido encontrado en el mapa, el usuario X
+	if (it != usuarios.end())
+	{
+		cerr << "El usuario: " << nuevoUsuario->getNombreUsuario()<< " ya existe.\nNo se puede agregar" <<endl;
+		success = false;
+	}
+	
+	else
+	{
+		//el contra-slash n se usa para escribir en la linea mas abajo del archivo
+		archivoCambiado <<"\n"<< nuevoUsuario->getNombreCompleto() 
+		<< ", " << nuevoUsuario->getNombreUsuario() 
+		<< ", " << nuevoUsuario->getEmail() 
+		<< ", " << nuevoUsuario->getNumeroTelefono() 
+		<< ", " << nuevoUsuario->getHashContrasena() << endl;
+		
+		success = true;
+	}
+
+	return success;
+	
 }

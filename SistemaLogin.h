@@ -37,10 +37,10 @@ class SistemaLogin {
 		//funciones  sobre el archivo y el mapa
 		bool parseFile(const string& filename); // parses the file to load users into the map
 		void mostrarInformacionUsuarios() const; //4. shows the user information
-		void eliminarInformacionDelMap(); //5. deletes a user from the map
+		void eliminarInformacionDelMap(); // deletes all users from the map
 		
 		//funciones del sistema
-		bool registrarUsuario(const string& user, const string& pass);
+		bool registrarUsuario(const string& filename, const string& username, Usuario* nuevoUsuario);
 		bool iniciarSesion();
 		bool verificarCredenciales(const string& user, const string& pass) const;
 		bool cerrarSesion();
