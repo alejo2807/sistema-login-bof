@@ -66,7 +66,6 @@ bool SistemaLogin::parseFile(const string &filename)
 		if (line.empty() || line.find("/") == 0) continue; 
 		
 		Usuario* userPtr = new Usuario(); // Crear un nuevo objeto Usuario para cada línea
-		
 		if (parseLine(line, *userPtr)) 
 		{
 			if(guardarAlMapa(userPtr)) 
@@ -235,7 +234,8 @@ void SistemaLogin::eliminarInformacionDelMap()
 	usuarios.clear(); 
 }
 
-bool SistemaLogin::registrarUsuario(const string& filename, const string& username, Usuario* nuevoUsuario)
+
+bool SistemaLogin::registrarUsuario(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario)
 {
 	std::ofstream archivoCambiado(filename, ios::app);
 	
@@ -249,6 +249,10 @@ bool SistemaLogin::registrarUsuario(const string& filename, const string& userna
 	//se retorna al final, ya que toda funcion booleana debe retorna algo al final
 	//(incluso si no es booleana, con que NO sea void, debe retornar algo)
 	bool success;
+	
+	//hasheamos la contrasena en registrar usuario, de tal modo que el metodo es privado
+	string hash = hashContrasena(plainPassword);
+	nuevoUsuario->setHashContrasena(hash);
 	
 	string searchUsername = nuevoUsuario->getNombreUsuario();
 	// .find() devuelve un puntero(iterador) que apunta al nombre de usuario encontrado

@@ -26,14 +26,12 @@ class SistemaLogin {
 		bool parseLine(const string& LineaDondeEstoy, Usuario& user); //parses a line from the file to create a Usuario object
 		bool guardarAlMapa(Usuario* nuevoUsuario); //saves the user to the map
 		
-		
-		//falta hash contrasena y funciones publicas
+		string hashContrasena(string password); 
 		
 
 	public:
 		SistemaLogin();
 		~SistemaLogin();
-		string hashContrasena(string password); //retornara la contraseña hasheada
 		
 		//funciones  sobre el archivo y el mapa
 		bool parseFile(const string& filename); // parses the file to load users into the map
@@ -41,7 +39,7 @@ class SistemaLogin {
 		void eliminarInformacionDelMap(); // deletes all users from the map
 		
 		//funciones del sistema
-		bool registrarUsuario(const string& filename, const string& username, Usuario* nuevoUsuario);
+		bool registrarUsuario(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario);
 		bool iniciarSesion();
 		bool verificarCredenciales(const string& user, const string& pass) const;
 		bool cerrarSesion();

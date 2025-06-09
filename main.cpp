@@ -32,13 +32,12 @@ int main()
 	
 	
 	SistemaLogin sistema;
-	string hash = sistema.hashContrasena(password);
 	
 	//se le pasan los parametros al usuario creado en la heap
-	//el ultimo parametro no es la contrasena, sino el hash de la misma
-	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, hash);
+	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
 
-	if(sistema.registrarUsuario("users.txt", nombreUser, nuevoUsuarioPrueba))
+	//en la funcion registrarUsuario() nos encargamos de hashear la contrasena
+	if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
 	{
 		sistema.parseFile("users.txt");
 		sistema.mostrarInformacionUsuarios();
@@ -46,7 +45,6 @@ int main()
 	};
 	sistema.eliminarInformacionDelMap();
 	
-	//g++ main.cpp Usuario.cpp SistemaLogin.cpp -o ap
 	return 0;
 	
 }
