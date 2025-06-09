@@ -19,21 +19,20 @@ class Usuario {
 		Usuario(); // Constructor por defecto
 		Usuario(string nombreCompleto, string nombreUsuario, string email, 
 				string numeroTelefono, string hashContrasena);
-		bool verificarContrasena(string contrasena) const;
 
 		// Getters
 		string getNombreCompleto() const;
 		string getNombreUsuario() const;
 		string getEmail() const;
 		string getNumeroTelefono() const;
-		string getHashContrasena() const { return hashContrasena; } // Getter para el hash de la contraseña
+		string getHashContrasena() const;
 		
 		// Setters
-		void setNombreCompleto(const string& nombre) { nombreCompleto = nombre; }
-		void setNombreUsuario(const string& usuario) { nombreUsuario = usuario; }
-		void setEmail(const string& email) { emailUsuario = email; }
-		void setNumeroTelefono(const string& telefono) { numeroTelefono = telefono; }
-		void setHashContrasena(const string& hash) { hashContrasena = hash; }
+		void setNombreCompleto(const string& nombre); 
+		void setNombreUsuario(const string& usuario);
+		void setEmail(const string& email); 
+		void setNumeroTelefono(const string& telefono); 
+		void setHashContrasena(const string& hash);
 
 };
 

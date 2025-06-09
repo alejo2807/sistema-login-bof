@@ -11,21 +11,7 @@ Usuario::Usuario(string nombreCompleto, string nombreUsuario, string email, stri
 		numeroTelefono(NumeroTelefono),
 		hashContrasena(hashContrasena){}
 
-Usuario::Usuario()
-{
-}
-
-bool Usuario::verificarContrasena(string contrasena) const
-{
-
-	// Aquí deberías implementar la lógica para verificar la contraseña
-	// Por ejemplo, comparar el hash de la contraseña ingresada con el hash almacenado
-	// En este caso, simplemente retornamos true para simular una verificación exitosa
-	return true; // Simulación de verificación exitosa
-}
-
-
-
+Usuario::Usuario(){}
 
 string Usuario::getNombreCompleto() const
 {
@@ -46,3 +32,34 @@ string Usuario::getNumeroTelefono() const
 {
 	return numeroTelefono;
 }
+
+string Usuario::getHashContrasena() const
+{
+	return hashContrasena;
+}
+
+void Usuario::setNombreCompleto(const string& nombre)
+{
+	nombreCompleto = nombre;
+}
+
+void Usuario::setNombreUsuario(const string& usuario)
+{
+	nombreUsuario = usuario;
+}
+
+void Usuario::setEmail(const string& email)
+{
+	emailUsuario = email;
+}
+
+void Usuario::setNumeroTelefono(const string& telefono)
+{
+	numeroTelefono = telefono;
+}
+
+void Usuario::setHashContrasena(const string& hash)
+{
+	hashContrasena = hash;
+}
+
