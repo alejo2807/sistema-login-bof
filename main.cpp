@@ -7,6 +7,8 @@ using namespace std;
 
 int main()
 {
+	
+	
 	string nombreComp;
 	string nombreUser;
 	string emailUser;
@@ -14,15 +16,15 @@ int main()
 	string password;
 	
 	cout<< "------------Bienvenido a Vibe City :)------------ "<<endl;
-	cout<< "---------------Menu de registro---------------"<<endl;
-	cout<< "Nombre Completo: " <<endl;
-	getline(cin, nombreComp);
+	cout<< "---------------Menu---------------"<<endl;
+	//cout<< "Nombre Completo: " <<endl;
+	//getline(cin, nombreComp);
 	cout<< "Nombre de Usuario: " <<endl;
 	getline(cin, nombreUser);
-	cout<< "Email: " <<endl;
-	getline(cin, emailUser);
-	cout<< "Numero Telefonico: " <<endl;
-	getline(cin, numeroUser);
+	//cout<< "Email: " <<endl;
+	//getline(cin, emailUser);
+	//cout<< "Numero Telefonico: " <<endl;
+	//getline(cin, numeroUser);
 	cout<< "Contrasena: " <<endl;
 	getline(cin, password);
 	
@@ -34,15 +36,27 @@ int main()
 	SistemaLogin sistema;
 	
 	//se le pasan los parametros al usuario creado en la heap
-	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
+	//Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
 
-	//en la funcion registrarUsuario() nos encargamos de hashear la contrasena
-	if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
+	
+	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
+	//if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
+	//{
+	//	sistema.parseFile("users.txt");
+	//	sistema.mostrarInformacionUsuarios();
+	//};
+	
+
+	sistema.parseFile("users.txt");
+	
+	if(sistema.iniciarSesion(nombreUser, password))
 	{
-		sistema.parseFile("users.txt");
-		sistema.mostrarInformacionUsuarios();
+		cout<<"Inicio Correcto"<<endl;
+	}
+	
+	else cerr<<"Hubo una falla"<<endl;	
 
-	};
+		
 	sistema.eliminarInformacionDelMap();
 	
 	return 0;

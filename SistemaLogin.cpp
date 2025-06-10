@@ -115,18 +115,23 @@ bool SistemaLogin::parseLine(const string &LineaDondeEstoy, Usuario &user)
 		switch(index) 
 		{
 			case 0:
+				limpiar(token);
 				user.setNombreCompleto(token);
 				break;
 			case 1:
+				limpiar(token);
 				user.setNombreUsuario(token);
 				break;
 			case 2:
+				limpiar(token);
 				user.setEmail(token);
 				break;
 			case 3:
+				limpiar(token);
 				user.setNumeroTelefono(token);
 				break;
 			case 4:
+				limpiar(token);			
 				user.setHashContrasena(token);
 				break;
 			default:
@@ -167,7 +172,14 @@ bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
 	
 }
 
-string SistemaLogin::hashContrasena(string password)
+string SistemaLogin::limpiar(const string &str)
+{
+	size_t inicio = str.find_first_not_of(" \t\n\r");
+	size_t fin = str.find_last_not_of(" \t\n\r");
+	return (inicio == string::npos) ? "" : str.substr(inicio, fin - inicio + 1);
+}
+
+string SistemaLogin::hashContrasena(const string& password)
 {
 	std::string hash = BCrypt::generateHash(password, 12);
 	return hash;
@@ -187,14 +199,10 @@ SistemaLogin::SistemaLogin()
 
 }
 
-//implementacion del destructor y cambios, de priv a public mostrar info y eliminar info
 SistemaLogin::~SistemaLogin()
 {
-	//como la funcion es de la misma clase, tiene acceso a la variable privada original
-	//entonces le pasamos el mapa como parametro a la funcion eliminarInfoDelMap.
 	eliminarInformacionDelMap(); 
 	cout << "Todos los usuarios han sido eliminados." << endl;	
-
 }
 
 void SistemaLogin::mostrarInformacionUsuarios() const
@@ -270,16 +278,82 @@ bool SistemaLogin::registrarUsuario(const string& filename, const string& userna
 	
 	else
 	{
+		//REVISAR EL TEMA DE LOS ESPACIOS EN LA ESCRITURA AL ARCHIVO 
+		//ES UN PUNTO CLAVE PORQUE POR EJEMPLO:
+		// "maria1" Y " maria1" SON COMPLETAMENTE DIFERENTES EN NOMBRES DE USUARIO
 		//el contra-slash n se usa para escribir en la linea mas abajo del archivo
 		archivoCambiado <<"\n"<< nuevoUsuario->getNombreCompleto() 
-		<< ", " << nuevoUsuario->getNombreUsuario() 
-		<< ", " << nuevoUsuario->getEmail() 
-		<< ", " << nuevoUsuario->getNumeroTelefono() 
-		<< ", " << nuevoUsuario->getHashContrasena() << endl;
+		<< "," << nuevoUsuario->getNombreUsuario() 
+		<< "," << nuevoUsuario->getEmail() 
+		<< "," << nuevoUsuario->getNumeroTelefono() 
+		<< "," << nuevoUsuario->getHashContrasena() << endl;
 		
+		//modificacion de los espacios de arriba (se eliminaron), al momento de escribir en la base de datos
 		success = true;
 	}
 
 	return success;
 	
+}
+////////////////////////////////////////////////////////////////////////////////////
+// funciones del sistema
+
+
+bool SistemaLogin::iniciarSesion(const string& user, string& pass)
+{
+	if(verificarCredenciales(user, pass)) return true;
+	
+	else return false;
+}
+
+bool SistemaLogin::verificarCredenciales(const string& user,  string& pass)
+{
+	bool success;
+	
+	//recordar que le debo poner el auto porque es un iterador,
+	//asi el copilador lo reconoce automaticamente, y no funciona con string it = ...
+	//porque no puedo asignar el resultado de buscar con la funcion.find() a un string,
+	//pues es un iterador
+	auto it = usuarios.find(user);
+	
+	//si encontro el usuario, que se cumplan las instrucciones siguientes
+	if (it != usuarios.end())
+	{
+		//esta linea de it->second, nos sirve para acceder al puntero desde el iterador
+		//it->first seria el username, it->second, el puntero de ese username
+		Usuario* userTemporal = it->second;
+		string hashEnMap = userTemporal->getHashContrasena();
+		
+		//usamos un metodo de la libreria Bcrypt para verificar la contrasena
+		//no podia directamente comparar con el hash hecho aqui y el guardado
+		//porque bcrypt siempre hace hashes diferentes por el componente del salt
+		if(BCrypt::validatePassword(pass, hashEnMap))
+		{
+			cout << "Bienvenido " << user << " a Vibe-City" << endl;
+			cout << "Tu plataforma de musica favorita :)" << endl;
+			success = true;
+			usuarioActivo = userTemporal;
+		}
+		else
+		{
+			cerr << "Contrasena incorrecta" << endl;
+			cerr << "Intentalo de nuevo" <<endl;
+			success = false;
+		}
+		
+	}
+	
+	else 
+	{
+		cerr << "Usuario no encontrado"<<endl;
+		cout << "Registrate para empezar a disfrutar de la buena musica :)" << endl;
+		success = false;
+	}
+
+	return success;
+}
+
+bool SistemaLogin::cerrarSesion()
+{
+	return false;
 }

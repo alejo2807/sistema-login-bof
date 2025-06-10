@@ -1,6 +1,6 @@
 #ifndef SISTEMALOGIN_H
 #define SISTEMALOGIN_H
-#include "Usuario.h" // Asegúrate de incluir el archivo Usuario.h
+#include "Usuario.h" 
 #include <string>
 #include <iostream>
 #include <map> //para el uso de maps
@@ -25,8 +25,9 @@ class SistemaLogin {
 		
 		bool parseLine(const string& LineaDondeEstoy, Usuario& user); //parses a line from the file to create a Usuario object
 		bool guardarAlMapa(Usuario* nuevoUsuario); //saves the user to the map
+		string limpiar(const string& str); //limpia espacios en blanco, tabulaciones o contra slash-n de los tokens
 		
-		string hashContrasena(string password); 
+		string hashContrasena(const string& password); 
 		
 
 	public:
@@ -40,8 +41,8 @@ class SistemaLogin {
 		
 		//funciones del sistema
 		bool registrarUsuario(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario);
-		bool iniciarSesion();
-		bool verificarCredenciales(const string& user, const string& pass) const;
+		bool iniciarSesion(const string& user, string& pass);
+		bool verificarCredenciales(const string& user, string& pass);
 		bool cerrarSesion();
 		bool estaConectado(const bool& estaActivo) const;
 		bool cambiarContrasena(const string& oldPass, const string& newPass);
