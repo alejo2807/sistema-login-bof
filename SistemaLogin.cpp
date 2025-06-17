@@ -196,6 +196,8 @@ string SistemaLogin::hashContrasena(const string& password)
 
 SistemaLogin::SistemaLogin()
 {
+	//inicializacion del puntero usuarioActivo, como null
+	usuarioActivo=nullptr;
 	if(verificarArchivo()) {cout << "Archivo de usuarios encontrado." << endl;} 
 
 	else {
@@ -242,7 +244,6 @@ void SistemaLogin::eliminarInformacionDelMap()
 		delete pair.second; 
 	}
 	
-	// limpiarToken el m// limpiarToken el mapaapa. 
 	//Se elimina los nombres de usuario (strings)
 	//Se eliminan los punteros a los objetos Usuario, que viven en la stack
 	usuarios.clear(); 
@@ -359,7 +360,31 @@ bool SistemaLogin::verificarCredenciales(const string& user,  string& pass)
 	return success;
 }
 
+// Probar implementacion de cerrarSesion()  y cambiarContrasena()
 bool SistemaLogin::cerrarSesion()
 {
+	if (usuarioActivo) {
+		cout << "Goodbye, " << usuarioActivo->getNombreUsuario() << endl;
+		usuarioActivo = nullptr;
+		return true;
+	}
+	return false;
+}
+
+bool SistemaLogin::cambiarContrasena(const string &oldPass, const string &newPass)
+{	
+	string nuevaContrasena;
+	
+	
+	Usuario* user2;
+	string hashEnMap = user2->getHashContrasena();
+	if(BCrypt::validatePassword(oldPass,hashEnMap))
+	{
+		cout<<"Ingresa la nueva contrasena: "<<endl;
+		getline(cin, nuevaContrasena);
+		string hashNuevo = BCrypt::generateHash(nuevaContrasena);
+		user2->setHashContrasena(hashNuevo);
+		
+	}
 	return false;
 }

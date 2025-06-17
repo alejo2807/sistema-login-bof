@@ -32,6 +32,7 @@ class SistemaLogin {
 
 	public:
 		SistemaLogin();
+		
 		~SistemaLogin();
 		
 		//funciones  sobre el archivo y el mapa
