@@ -46,6 +46,8 @@ int main()
 		O LOS COMENTARIOS EN LA BASE DE DATOS 
 	-VERIFICAR QUE NO SE PUEDAN AGREGAR 2 USUARIOS CON EL MISMO NOMBRE 
 		A LA BASE DE DATOS
+	-CREAR NUEVA RAMA PARA EL PROPOSITO DE ARRIBA (QUE NO SE PUEDAN AGREGAR 2 USERS
+		CON MISMO NOMBR A LA BASE DE DATOS)
 	
 	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
 	if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
