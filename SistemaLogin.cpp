@@ -191,6 +191,30 @@ string SistemaLogin::hashContrasena(const string& password)
 	return hash;
 }
 
+string SistemaLogin::maskEmail(const string& email) {
+	
+	//si no se encuentra se retorna los 3 asterisctos
+	if (email.empty()) return "***";
+	size_t atPos = email.find('@');
+	
+	//string::npos sirve para tener una posicion "no encontrada"
+	//aqui tambien, si no se encuentra se retorna los 3 asterisctos
+	if (atPos == string::npos) return "***";
+	
+	//extrae, de la cadena, la posicion 0, con una longitud de 1 caracter
+	//luego le suma 3 asteriscos al correo, "escondiendolo"
+	//finalmente, de la cadena email, extrea la cadena desde un caracter antes del '@', hasta el final.
+	// Turns "margaret@gmail.com" → "m***t@gmail.com" (example)
+	return email.substr(0, 1) + "***" + email.substr(atPos - 1);
+	
+	
+	//substr(pos, len);
+	//Parameters:
+	//pos: Index of the first character to be copied.
+	//len: Length of the sub-string.
+	//if len is not specified, it takes all from the start position "pos" till the end
+}
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -373,18 +397,57 @@ bool SistemaLogin::cerrarSesion()
 
 bool SistemaLogin::cambiarContrasena(const string &oldPass, const string &newPass)
 {	
-	string nuevaContrasena;
-	
-	
-	Usuario* user2;
-	string hashEnMap = user2->getHashContrasena();
-	if(BCrypt::validatePassword(oldPass,hashEnMap))
+
+	string hashTemporal = usuarioActivo->getHashContrasena();
+	if(BCrypt::validatePassword(oldPass,hashTemporal))
 	{
-		cout<<"Ingresa la nueva contrasena: "<<endl;
-		getline(cin, nuevaContrasena);
-		string hashNuevo = BCrypt::generateHash(nuevaContrasena);
-		user2->setHashContrasena(hashNuevo);
-		
+		string hashNuevo = BCrypt::generateHash(newPass);
+		usuarioActivo->setHashContrasena(hashNuevo);
+		return true;
 	}
 	return false;
+}
+
+bool SistemaLogin::restablecerContrasena() 
+{
+	if (usuarioActivo) {
+		cout << "Cierra sesión primero para restablecer contraseña.\n";
+		return false;
+	}
+
+	string username, email, newPassword;
+	
+	// Step 1: Verify user exists
+	cout << "Ingrese su nombre de usuario: ";
+	getline(cin, username);
+	
+	auto it = usuarios.find(username);
+	if (it == usuarios.end()) {
+		cerr << "Usuario no encontrado.\n";
+		return false;
+	}
+
+	// Step 2: Verify email/phone (professional touch)
+	Usuario* user = it->second;
+	string storedEmail = user->getEmail();
+	string maskedEmail = maskEmail(storedEmail);
+	
+	cout << "Ingrese el email registrado (" << maskedEmail << "): ";
+	getline(cin, email);
+	
+	if (email != storedEmail) {
+		cerr << "Email no coincide.\n";
+		return false;
+	}
+
+	// Step 3: Generate temporary password (simple approach)
+	string tempPassword = "temp_" + to_string(rand() % 1000);
+	cout << "\nTu contraseña temporal es: " << tempPassword 
+		<< "\nCámbiala inmediatamente después de iniciar sesión.\n\n";
+
+	// Step 4: Update password (using existing cambiarContrasena)
+	user->setHashContrasena(hashContrasena(tempPassword));
+	
+	cout << "✓ Contraseña restablecida. Inicia sesión con la temporal.\n";
+	return true;
 }

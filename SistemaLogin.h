@@ -27,7 +27,11 @@ class SistemaLogin {
 		bool guardarAlMapa(Usuario* nuevoUsuario); //saves the user to the map
 		string limpiarToken(string& str); //limpia espacios en blanco, tabulaciones o contra slash-n de los tokens
 		
+		//funciones especiales privadas
 		string hashContrasena(const string& password); 
+		//esconder el email con asteriscos. Por ejemplo margaret@gmail.com
+		//con maskEmail seria m***t@gmail.com
+		string maskEmail(const string& email); 
 		
 
 	public:
@@ -47,7 +51,8 @@ class SistemaLogin {
 		bool cerrarSesion();
 		//elimine la fn bool estaConectado. No la vi necesaria, pues el mensaje lo dejo en iniciarSesion()
 		bool cambiarContrasena(const string& oldPass, const string& newPass);
-		bool restablecerContrasena(const string& user, const string& newPass);
+		//en restablecler contrasena usamos el email escondido (maskEmail)
+		bool restablecerContrasena();
 
 };
 
