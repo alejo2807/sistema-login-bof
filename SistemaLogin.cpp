@@ -3,7 +3,10 @@
 #include <string>
 #include <map> 
 #include <fstream> // Para manejar archivos, usamos ifstream y ofstream
-#include <sstream> // Para usar stringstream
+#include <sstream> // Para usar stringstream, istringstream y ostringstream 
+//sringstream es el dispensador, istringstream es la cajita de dulces parecida al dispensador
+//y ostringstream es como el constructor que une palabras en una misma linea
+#include <vector>
 
 //para el algoritmo de criptografia bcrypt (hashear contrasena)
 #include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
@@ -45,7 +48,8 @@ bool SistemaLogin::crearArchivo()
 
 bool SistemaLogin::parseFile(const string &filename)
 {
-	//lo comento porque ya esta creado el archivo users.txt (ofstream recibe filename)
+		
+	//Esto lo comento porque ya esta creado el archivo users.txt (ofstream recibe filename)
 	//std::ofstream nuevoArchivo(filename);
 	//nuevoArchivo.close();
 	
@@ -115,23 +119,23 @@ bool SistemaLogin::parseLine(const string &LineaDondeEstoy, Usuario &user)
 		switch(index) 
 		{
 			case 0:
-				limpiar(token);
+				limpiarToken(token);
 				user.setNombreCompleto(token);
 				break;
 			case 1:
-				limpiar(token);
+				limpiarToken(token);
 				user.setNombreUsuario(token);
 				break;
 			case 2:
-				limpiar(token);
+				limpiarToken(token);
 				user.setEmail(token);
 				break;
 			case 3:
-				limpiar(token);
+				limpiarToken(token);
 				user.setNumeroTelefono(token);
 				break;
 			case 4:
-				limpiar(token);			
+				limpiarToken(token);			
 				user.setHashContrasena(token);
 				break;
 			default:
@@ -172,12 +176,14 @@ bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
 	
 }
 
-string SistemaLogin::limpiar(const string &str)
+string SistemaLogin::limpiarToken(string &str)
 {
 	size_t inicio = str.find_first_not_of(" \t\n\r");
 	size_t fin = str.find_last_not_of(" \t\n\r");
-	return (inicio == string::npos) ? "" : str.substr(inicio, fin - inicio + 1);
+	return (inicio == string::npos || fin == string::npos) ? "" : str.substr(inicio, fin - inicio + 1);
 }
+
+
 
 string SistemaLogin::hashContrasena(const string& password)
 {
@@ -236,7 +242,7 @@ void SistemaLogin::eliminarInformacionDelMap()
 		delete pair.second; 
 	}
 	
-	// Limpiar el m// Limpiar el mapaapa. 
+	// limpiarToken el m// limpiarToken el mapaapa. 
 	//Se elimina los nombres de usuario (strings)
 	//Se eliminan los punteros a los objetos Usuario, que viven en la stack
 	usuarios.clear(); 
@@ -278,9 +284,6 @@ bool SistemaLogin::registrarUsuario(const string& filename, const string& userna
 	
 	else
 	{
-		//REVISAR EL TEMA DE LOS ESPACIOS EN LA ESCRITURA AL ARCHIVO 
-		//ES UN PUNTO CLAVE PORQUE POR EJEMPLO:
-		// "maria1" Y " maria1" SON COMPLETAMENTE DIFERENTES EN NOMBRES DE USUARIO
 		//el contra-slash n se usa para escribir en la linea mas abajo del archivo
 		archivoCambiado <<"\n"<< nuevoUsuario->getNombreCompleto() 
 		<< "," << nuevoUsuario->getNombreUsuario() 
@@ -288,7 +291,6 @@ bool SistemaLogin::registrarUsuario(const string& filename, const string& userna
 		<< "," << nuevoUsuario->getNumeroTelefono() 
 		<< "," << nuevoUsuario->getHashContrasena() << endl;
 		
-		//modificacion de los espacios de arriba (se eliminaron), al momento de escribir en la base de datos
 		success = true;
 	}
 
@@ -301,7 +303,11 @@ bool SistemaLogin::registrarUsuario(const string& filename, const string& userna
 
 bool SistemaLogin::iniciarSesion(const string& user, string& pass)
 {
-	if(verificarCredenciales(user, pass)) return true;
+	if(verificarCredenciales(user, pass)) 
+	{
+		cout<<"Has iniciado sesion como " << user <<endl;
+		return true;
+	}
 	
 	else return false;
 }

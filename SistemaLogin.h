@@ -25,7 +25,7 @@ class SistemaLogin {
 		
 		bool parseLine(const string& LineaDondeEstoy, Usuario& user); //parses a line from the file to create a Usuario object
 		bool guardarAlMapa(Usuario* nuevoUsuario); //saves the user to the map
-		string limpiar(const string& str); //limpia espacios en blanco, tabulaciones o contra slash-n de los tokens
+		string limpiarToken(string& str); //limpia espacios en blanco, tabulaciones o contra slash-n de los tokens
 		
 		string hashContrasena(const string& password); 
 		
@@ -44,7 +44,7 @@ class SistemaLogin {
 		bool iniciarSesion(const string& user, string& pass);
 		bool verificarCredenciales(const string& user, string& pass);
 		bool cerrarSesion();
-		bool estaConectado(const bool& estaActivo) const;
+		//elimine la fn bool estaConectado. No la vi necesaria, pues el mensaje lo dejo en iniciarSesion()
 		bool cambiarContrasena(const string& oldPass, const string& newPass);
 		bool restablecerContrasena(const string& user, const string& newPass);
 

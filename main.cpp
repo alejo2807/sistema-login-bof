@@ -29,22 +29,38 @@ int main()
 	getline(cin, password);
 	
 	//COMPILO CON ESTE COMANDO:
-	//g++ main.cpp Usuario.cpp SistemaLogin.cpp libbcrypt/src/*.c -Ilibbcrypt/include -o ap
+	//g++ main.cpp Usuario.cpp SistemaLogin.cpp libbcrypt/src/*.c -Ilibbcrypt/include -o a
 
 	
 	
 	SistemaLogin sistema;
 	
 	//se le pasan los parametros al usuario creado en la heap
-	//Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
+	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
 
+	//NOTAS;
+	/*
+	-FALTAN UN PAR DE FUNCIONES PUBLCIAS COMO CAMBIAR CONTRASENA,
+		Y RESTABLECLER CONTRASENA
+	-CORREGIR TAMBIEN, PARA QUE NO SE ME BORREN LAS LINEAS DE LOS ESPACIOS 
+		O LOS COMENTARIOS EN LA BASE DE DATOS 
+	-VERIFICAR QUE NO SE PUEDAN AGREGAR 2 USUARIOS CON EL MISMO NOMBRE 
+		A LA BASE DE DATOS
 	
 	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
-	//if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
-	//{
-	//	sistema.parseFile("users.txt");
-	//	sistema.mostrarInformacionUsuarios();
-	//};
+	if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
+	{
+		sistema.parseFile("users.txt");
+		sistema.mostrarInformacionUsuarios();
+		if(sistema.iniciarSesion(nombreUser, password))
+		{
+			cout<<"Inicio Correcto"<<endl;
+		}
+	
+		else cerr<<"Hubo una falla"<<endl;	
+	
+	};
+	*/
 	
 
 	sistema.parseFile("users.txt");
@@ -55,23 +71,10 @@ int main()
 	}
 	
 	else cerr<<"Hubo una falla"<<endl;	
-
-		
+	
+	
 	sistema.eliminarInformacionDelMap();
 	
 	return 0;
 	
 }
-
-
-
-
-/*
-	//ejemplo de hash con bcrypt
-	std::string password = "password123";
-	std::string hash = BCrypt::generateHash(password, 12);
-	std::cout << "Hashed: " << hash << std::endl;
-
-	bool isValid = BCrypt::validatePassword(password, hash);
-	std::cout << "Valid? " << (isValid ? "YES" : "NO") << std::endl;
-*/
