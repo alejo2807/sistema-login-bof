@@ -36,11 +36,11 @@ int main()
 	SistemaLogin sistema;
 	
 	//se le pasan los parametros al usuario creado en la heap
-	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
+	//Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
 
 	//NOTAS;
 	/*
-	-FALTAN UN PAR DE FUNCIONES PUBLCIAS COMO CAMBIAR CONTRASENA,
+	-FALTAN UN PAR DE FUNCIONES PUBLCIAS COMO CAMBIAR CONTRASENA, CERRAR SESION
 		Y RESTABLECLER CONTRASENA
 	-CORREGIR TAMBIEN, PARA QUE NO SE ME BORREN LAS LINEAS DE LOS ESPACIOS 
 		O LOS COMENTARIOS EN LA BASE DE DATOS 
