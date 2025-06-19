@@ -236,7 +236,9 @@ bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Us
 	}
 	while(getline(archivoLeido, lineaLeidaDelArchivo))
 		{
-			if(lineaLeidaDelArchivo.find(searchUsername))
+			//npos es una posicion no encontrada en el string, 
+			//o sea en la linea actual del archivo parseado
+			if(lineaLeidaDelArchivo.find(searchUsername) != string::npos)
 			{
 			success = false;
 			cerr<<"Error. Usuario no disponible\nIntentalo de nuevo."<<endl;
