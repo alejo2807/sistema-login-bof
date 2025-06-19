@@ -33,6 +33,9 @@ class SistemaLogin {
 		//con maskEmail seria m***t@gmail.com
 		string maskEmail(const string& email); 
 		
+		//verificar que el usuario no este repetido en la base de datos
+		bool verificarUsuarioNoRepetidoDataBase(const string& filename, Usuario* nuevoUsuario);
+		
 
 	public:
 		SistemaLogin();
@@ -45,7 +48,7 @@ class SistemaLogin {
 		void eliminarInformacionDelMap(); // deletes all users from the map
 		
 		//funciones del sistema
-		bool registrarUsuario(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario);
+		bool registrarUsuarioAlArchivo(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario);
 		bool iniciarSesion(const string& user, string& pass);
 		bool verificarCredenciales(const string& user, string& pass);
 		bool cerrarSesion();

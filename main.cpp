@@ -17,14 +17,14 @@ int main()
 	
 	cout<< "------------Bienvenido a Vibe City :)------------ "<<endl;
 	cout<< "---------------Menu---------------"<<endl;
-	//cout<< "Nombre Completo: " <<endl;
-	//getline(cin, nombreComp);
+	cout<< "Nombre Completo: " <<endl;
+	getline(cin, nombreComp);
 	cout<< "Nombre de Usuario: " <<endl;
 	getline(cin, nombreUser);
-	//cout<< "Email: " <<endl;
-	//getline(cin, emailUser);
-	//cout<< "Numero Telefonico: " <<endl;
-	//getline(cin, numeroUser);
+	cout<< "Email: " <<endl;
+	getline(cin, emailUser);
+	cout<< "Numero Telefonico: " <<endl;
+	getline(cin, numeroUser);
 	cout<< "Contrasena: " <<endl;
 	getline(cin, password);
 	
@@ -36,23 +36,19 @@ int main()
 	SistemaLogin sistema;
 	
 	//se le pasan los parametros al usuario creado en la heap
-	//Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
+	Usuario* nuevoUsuarioPrueba = new Usuario(nombreComp, nombreUser, emailUser, numeroUser, password);
 
 	//NOTAS;
 	/*
-	-FALTAN UN PAR DE FUNCIONES PUBLCIAS COMO CAMBIAR CONTRASENA, CERRAR SESION
-		Y RESTABLECLER CONTRASENA
+	-AGREGAR IMPLEMENTACION DE API PARA VALIDACION DE NUMEROTELEFONICO Y CORREO
+	(REVISAR EL CURSO DE APIS DE FREECODEORG EN INGLES)
 	-CORREGIR TAMBIEN, PARA QUE NO SE ME BORREN LAS LINEAS DE LOS ESPACIOS 
 		O LOS COMENTARIOS EN LA BASE DE DATOS 
-	-VERIFICAR QUE NO SE PUEDAN AGREGAR 2 USUARIOS CON EL MISMO NOMBRE 
-		A LA BASE DE DATOS
-	-CREAR NUEVA RAMA PARA EL PROPOSITO DE ARRIBA (QUE NO SE PUEDAN AGREGAR 2 USERS
-		CON MISMO NOMBR A LA BASE DE DATOS)
-	
+	*/
 	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
-	if(sistema.registrarUsuario("users.txt", nombreUser, password,  nuevoUsuarioPrueba))
+	if(sistema.registrarUsuarioAlArchivo("users.csv", nombreUser, password,  nuevoUsuarioPrueba))
 	{
-		sistema.parseFile("users.txt");
+		sistema.parseFile("users.csv");
 		sistema.mostrarInformacionUsuarios();
 		if(sistema.iniciarSesion(nombreUser, password))
 		{
@@ -62,10 +58,9 @@ int main()
 		else cerr<<"Hubo una falla"<<endl;	
 	
 	};
-	*/
 	
-
-	sistema.parseFile("users.txt");
+	/*
+	sistema.parseFile("users.csv");
 	
 	if(sistema.iniciarSesion(nombreUser, password))
 	{
@@ -73,6 +68,10 @@ int main()
 	}
 	
 	else cerr<<"Hubo una falla"<<endl;	
+	
+	
+	*/
+
 	
 	
 	sistema.eliminarInformacionDelMap();

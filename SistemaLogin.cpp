@@ -16,7 +16,7 @@ using namespace std;
 
 bool SistemaLogin::verificarArchivo()
 {
-	std::ifstream miArchivo("users.txt");
+	std::ifstream miArchivo("users.csv");
 	if (miArchivo.is_open()) 
 	{ 
 		miArchivo.close(); // Cerrar el archivo después de verificar
@@ -32,10 +32,10 @@ bool SistemaLogin::crearArchivo()
 	}
 
 	// Si el archivo no existe, lo creamos
-	std::ofstream nuevoArchivo("users.txt");
+	std::ofstream nuevoArchivo("users.csv");
 	if (!nuevoArchivo.is_open()) {
 		//vamos a dar mas informacion al usuario si no se pudo crear el archivo
-		std::cerr<< "Error al crear el archivo users.txt.\n Asegúrate de tener permisos de escritura en el directorio." << std::endl;
+		std::cerr<< "Error al crear el archivo users.csv.\n Asegúrate de tener permisos de escritura en el directorio." << std::endl;
 		return false; // Si no se pudo abrir el archivo, retornar false
 
 	}
@@ -49,7 +49,7 @@ bool SistemaLogin::crearArchivo()
 bool SistemaLogin::parseFile(const string &filename)
 {
 		
-	//Esto lo comento porque ya esta creado el archivo users.txt (ofstream recibe filename)
+	//Esto lo comento porque ya esta creado el archivo users.csv (ofstream recibe filename)
 	//std::ofstream nuevoArchivo(filename);
 	//nuevoArchivo.close();
 	
@@ -215,6 +215,40 @@ string SistemaLogin::maskEmail(const string& email) {
 	//if len is not specified, it takes all from the start position "pos" till the end
 }
 
+bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Usuario *nuevoUsuario)
+{
+	//variable para medir si la funcion es exitosa o no
+	//se retorna al final, ya que toda funcion booleana debe retorna algo al final
+	//(incluso si no es booleana, con que NO sea void, debe retornar algo)
+	bool success;
+	string searchUsername = nuevoUsuario->getNombreUsuario();
+
+
+	// Intentamos leer el archivo y lo parseamos.
+	// (esta es la verificacion para evitar nombres de usuario repetidos en la base de datos)
+	ifstream archivoLeido(filename);
+	string lineaLeidaDelArchivo;
+	
+	if(!archivoLeido.is_open())
+	{
+		cerr <<"error en la base de datos"<<endl;
+		success = false;
+	}
+	while(getline(archivoLeido, lineaLeidaDelArchivo))
+		{
+			if(lineaLeidaDelArchivo.find(searchUsername))
+			{
+			success = false;
+			cerr<<"Error. Usuario no disponible\nIntentalo de nuevo."<<endl;
+			break;
+			}
+			else success = true;
+		}
+	archivoLeido.close();
+	
+	return success;
+}
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -274,54 +308,43 @@ void SistemaLogin::eliminarInformacionDelMap()
 }
 
 
-bool SistemaLogin::registrarUsuario(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario)
+bool SistemaLogin::registrarUsuarioAlArchivo(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario)
 {
-	std::ofstream archivoCambiado(filename, ios::app);
-	
-	if(!archivoCambiado.is_open())
-	{
-		cerr << "No se pudo abrir el archivo" <<endl;
-		return false;
-	}
-	
-	//variable para medir si la funcion es exitosa o no
-	//se retorna al final, ya que toda funcion booleana debe retorna algo al final
-	//(incluso si no es booleana, con que NO sea void, debe retornar algo)
+
 	bool success;
 	
-	//hasheamos la contrasena en registrar usuario, de tal modo que el metodo es privado
-	string hash = hashContrasena(plainPassword);
-	nuevoUsuario->setHashContrasena(hash);
-	
-	string searchUsername = nuevoUsuario->getNombreUsuario();
-	// .find() devuelve un puntero(iterador) que apunta al nombre de usuario encontrado
-	auto it = usuarios.find(searchUsername);
-	
-	// .end() devuelve un puntero (iterador) que apunta al ultimo objeto + 1 posicion,
-	// tecnicamente .end() es una posicion que no existe en el mapa
-	//por lo que, la comparacion es que si it es diferente a usuarios.end()
-	// eso significa que si ha sido encontrado en el mapa, el usuario X
-	if (it != usuarios.end())
+	if(verificarUsuarioNoRepetidoDataBase(filename,nuevoUsuario))
 	{
-		cerr << "El usuario: " << nuevoUsuario->getNombreUsuario()<< " ya existe.\nNo se puede agregar" <<endl;
-		success = false;
-	}
-	
-	else
-	{
+		// Se abre el archivo con ofstream en modo edicion, 
+		// y para escribir en la ultima linea usamos ios::app
+		std::ofstream archivoCambiado(filename, ios::app);
+		
+		if(!archivoCambiado.is_open())
+		{
+			cerr << "No se pudo abrir el archivo" <<endl;
+			success = false;
+		}
+
+		//hasheamos la contrasena en registrar usuario, de tal modo que el metodo es privado
+		string hash = hashContrasena(plainPassword);
+		nuevoUsuario->setHashContrasena(hash);
+
 		//el contra-slash n se usa para escribir en la linea mas abajo del archivo
 		archivoCambiado <<"\n"<< nuevoUsuario->getNombreCompleto() 
 		<< "," << nuevoUsuario->getNombreUsuario() 
 		<< "," << nuevoUsuario->getEmail() 
 		<< "," << nuevoUsuario->getNumeroTelefono() 
 		<< "," << nuevoUsuario->getHashContrasena() << endl;
-		
 		success = true;
+		
 	}
-
-	return success;
 	
+	return success;
+		
 }
+		
+	
+
 ////////////////////////////////////////////////////////////////////////////////////
 // funciones del sistema
 
