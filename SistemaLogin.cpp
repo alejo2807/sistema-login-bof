@@ -234,22 +234,31 @@ bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Us
 		cerr <<"error en la base de datos"<<endl;
 		success = false;
 	}
-	while(getline(archivoLeido, lineaLeidaDelArchivo))
-		{
-			//npos es una posicion no encontrada en el string, 
-			//o sea en la linea actual del archivo parseado
-			if(lineaLeidaDelArchivo.find(searchUsername) != string::npos)
-			{
-			success = false;
-			cerr<<"Error. Usuario no disponible\nIntentalo de nuevo."<<endl;
-			break;
-			}
-			else success = true;
-		}
-	archivoLeido.close();
-	
-	return success;
+	while(getline(archivoLeido, lineaLeidaDelArchivo)) {
+        // Saltar líneas vacías/comentarios
+        if(lineaLeidaDelArchivo.empty() || lineaLeidaDelArchivo[0] == '/') continue;
+
+        // Extraer solo el nombre de usuario (segundo campo entre comas)
+        size_t posInicio = lineaLeidaDelArchivo.find(',') + 1;
+        size_t posFin = lineaLeidaDelArchivo.find(',', posInicio);
+        string usuarioEnArchivo = lineaLeidaDelArchivo.substr(posInicio, posFin - posInicio);
+
+        // Eliminar espacios alrededor si los hay
+        usuarioEnArchivo.erase(0, usuarioEnArchivo.find_first_not_of(" \t"));
+        usuarioEnArchivo.erase(usuarioEnArchivo.find_last_not_of(" \t") + 1);
+
+        // Comparación exacta
+        if(usuarioEnArchivo == searchUsername) {
+            archivoLeido.close();
+            cerr << "Error. Usuario '" << searchUsername << "' no disponible.\n";
+            return false;
+        }
+    }
+    
+    archivoLeido.close();
+    return true;
 }
+
 
 ////////////////////////////////////////////////////////////////
 
