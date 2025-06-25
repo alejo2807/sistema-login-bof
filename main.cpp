@@ -17,14 +17,14 @@ int main()
 	
 	cout<< "------------Bienvenido a Vibe City :)------------ "<<endl;
 	cout<< "---------------Menu---------------"<<endl;
-	cout<< "Nombre Completo: " <<endl;
-	getline(cin, nombreComp);
+	//cout<< "Nombre Completo: " <<endl;
+	//getline(cin, nombreComp);
 	cout<< "Nombre de Usuario: " <<endl;
 	getline(cin, nombreUser);
-	cout<< "Email: " <<endl;
-	getline(cin, emailUser);
-	cout<< "Numero Telefonico: " <<endl;
-	getline(cin, numeroUser);
+	//cout<< "Email: " <<endl;
+	//getline(cin, emailUser);
+	//cout<< "Numero Telefonico: " <<endl;
+	//getline(cin, numeroUser);
 	cout<< "Contrasena: " <<endl;
 	getline(cin, password);
 	
@@ -42,11 +42,9 @@ int main()
 	/*
 	-AGREGAR IMPLEMENTACION DE API PARA VALIDACION DE NUMEROTELEFONICO Y CORREO
 	(REVISAR EL CURSO DE APIS DE FREECODEORG EN INGLES)
-	-CORREGIR TAMBIEN, PARA QUE NO SE ME BORREN LAS LINEAS DE LOS ESPACIOS 
-	O LOS COMENTARIOS EN LA BASE DE DATOS
-	-VERIFICAR QUE CERRAR SESION, CAMBIAR CONTRASENA Y RESTABLECER CONTRASENA 
-	FUNCIONEN CORRECTAMENTE
-	*/
+	-VERIFICAR QUE RESTABLECER CONTRASENA 
+	FUNCIONEN CORRECTAMENTEERIFICAR QUE CERRAR SESION,
+	
 	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
 	if(sistema.registrarUsuarioAlArchivo("users.csv", nombreUser, password,  nuevoUsuarioPrueba))
 	{
@@ -60,22 +58,68 @@ int main()
 		else cerr<<"Hubo una falla"<<endl;	
 	
 	};
+	*/
 	
-	/*
 	sistema.parseFile("users.csv");
-	
+
 	if(sistema.iniciarSesion(nombreUser, password))
 	{
 		cout<<"Inicio Correcto"<<endl;
+		//1.probaremos cerrar sesion  (si funciona, goat)
+		//2. probaremos cambiar contrasena (si funciona, goat)
+		//3. probaremos restablecer contrasena
+		int opc = 0;
+		string nuevaContrasena;
+		while(opc != 2)
+		{
+			cout << "Selecciona una opcion: " << endl;
+			cout << "1. Cambiar contrasena" << endl;
+			cout << "2. Salir" << endl;
+			cin >> opc;
+			cin.ignore(); // Clear newline left in input buffer
+
+			switch(opc)
+			{
+				case 1:
+					cout<<"Ahora cambiaremos la contrasena"<<endl;
+					cout<<"Ingresa la nueva contrasena: "<<endl;
+					getline(cin, nuevaContrasena);
+		
+					if(sistema.cambiarContrasena(password, nuevaContrasena))
+					{
+						cout<<"OK. Puedes ingresar con la nueva contrasena"<<endl;
+					}
+					else cerr<<"Hubo una falla al cambiar la contrasena"<<endl;
+					break;
+				case 2:
+					cout << "Saliendo del sistema..." << endl;
+					opc = 2; // Exit the loop
+					sistema.cerrarSesion();
+					break;
+				default:
+					cout<<"Seleccionaste una opcion no valida. Intenta de nuevo." << endl;
+					break;
+			}
+		}
+		
+		
+		//sistema.cerrarSesion();
+		//sistema.restablecerContrasena();
+		
+
+		
 	}
 	
-	else cerr<<"Hubo una falla"<<endl;	
-	
-	
-	*/
+	else cerr<<"Hubo una falla"<<endl;
+
+	cout<<"Olvidaste tu contrasena? No hay problema, puedes restablecerla."<<endl;
+	sistema.restablecerContrasena();
 
 	
-	
+
+
+
+
 	sistema.eliminarInformacionDelMap();
 	
 	return 0;
