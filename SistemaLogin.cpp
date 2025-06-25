@@ -8,6 +8,9 @@
 //y ostringstream es como el constructor que une palabras en una misma linea
 #include <vector>
 
+#include <cstdlib>// para rand() y srand()
+#include <ctime>// para time()
+
 //para el algoritmo de criptografia bcrypt (hashear contrasena)
 #include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
 using namespace std;
@@ -157,10 +160,10 @@ bool SistemaLogin::parseLine(const string &LineaDondeEstoy, Usuario &user)
 	
 }
 
-bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
+bool SistemaLogin::guardarAlMapa(Usuario *usuarioActivo)
 {
 	
-	string username = nuevoUsuario->getNombreUsuario(); 
+	string username = usuarioActivo->getNombreUsuario(); 
 	
 	if(usuarios.find(username) != usuarios.end()) 
 	{
@@ -170,7 +173,7 @@ bool SistemaLogin::guardarAlMapa(Usuario *nuevoUsuario)
 	else
 	{
 		//usuario vive en el heap, por lo que debemos usar un puntero a Usuario
-		usuarios[username] = nuevoUsuario; // Agregar el usuario al mapa
+		usuarios[username] = usuarioActivo; // Agregar el usuario al mapa
 		return true;
 	}
 	
@@ -215,49 +218,87 @@ string SistemaLogin::maskEmail(const string& email) {
 	//if len is not specified, it takes all from the start position "pos" till the end
 }
 
-bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Usuario *nuevoUsuario)
+bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Usuario *usuarioActivo)
 {
 	//variable para medir si la funcion es exitosa o no
 	//se retorna al final, ya que toda funcion booleana debe retorna algo al final
 	//(incluso si no es booleana, con que NO sea void, debe retornar algo)
 	bool success;
-	string searchUsername = nuevoUsuario->getNombreUsuario();
+	string searchUsername = usuarioActivo->getNombreUsuario();
 
 
 	// Intentamos leer el archivo y lo parseamos.
 	// (esta es la verificacion para evitar nombres de usuario repetidos en la base de datos)
 	ifstream archivoLeido(filename);
-	string lineaLeidaDelArchivo;
+	string line;
 	
 	if(!archivoLeido.is_open())
 	{
 		cerr <<"error en la base de datos"<<endl;
 		success = false;
 	}
-	while(getline(archivoLeido, lineaLeidaDelArchivo)) {
-        // Saltar líneas vacías/comentarios
-        if(lineaLeidaDelArchivo.empty() || lineaLeidaDelArchivo[0] == '/') continue;
+	while(getline(archivoLeido, line)) {
+		// Saltar líneas vacías/comentarios
+		if(line.empty() || line[0] == '/') continue;
 
-        // Extraer solo el nombre de usuario (segundo campo entre comas)
-        size_t posInicio = lineaLeidaDelArchivo.find(',') + 1;
-        size_t posFin = lineaLeidaDelArchivo.find(',', posInicio);
-        string usuarioEnArchivo = lineaLeidaDelArchivo.substr(posInicio, posFin - posInicio);
+		// Extraer solo el nombre de usuario (segundo campo entre comas)
+		size_t posInicio = line.find(',') + 1;
+		size_t posFin = line.find(',', posInicio);
+		string usuarioEnArchivo = line.substr(posInicio, posFin - posInicio);
 
-        // Eliminar espacios alrededor si los hay
-        usuarioEnArchivo.erase(0, usuarioEnArchivo.find_first_not_of(" \t"));
-        usuarioEnArchivo.erase(usuarioEnArchivo.find_last_not_of(" \t") + 1);
+		// Eliminar espacios alrededor si los hay
+		usuarioEnArchivo.erase(0, usuarioEnArchivo.find_first_not_of(" \t"));
+		usuarioEnArchivo.erase(usuarioEnArchivo.find_last_not_of(" \t") + 1);
 
-        // Comparación exacta
-        if(usuarioEnArchivo == searchUsername) {
-            archivoLeido.close();
-            cerr << "Error. Usuario '" << searchUsername << "' no disponible.\n";
-            return false;
-        }
-    }
-    
-    archivoLeido.close();
-    return true;
+		// Comparación exacta
+		if(usuarioEnArchivo == searchUsername) {
+			archivoLeido.close();
+			cerr << "Error. Usuario '" << searchUsername << "' no disponible.\n";
+			return false;
+		}
+	}
+	
+	archivoLeido.close();
+	return true;
 }
+
+void SistemaLogin::overwriteSpecificLineInFile(const string &filename, const string &username)
+{
+	ifstream inFile(filename);
+	ofstream outFile("temp.csv");
+	string line;
+	
+	std::ostringstream oss;
+	oss << usuarioActivo->getNombreCompleto()
+		<< "," << usuarioActivo->getNombreUsuario()
+		<< "," << usuarioActivo->getEmail()
+		<< "," << usuarioActivo->getNumeroTelefono()
+		<< "," << usuarioActivo->getHashContrasena();
+
+	string newContent = oss.str();
+
+	while (getline(inFile, line)) {
+		
+		// Extract username from CSV line
+		size_t firstComma = line.find(',');
+		size_t secondComma = line.find(',', firstComma + 1);
+		string fileUsername = line.substr(firstComma + 1, secondComma - firstComma - 1);
+		
+		if (fileUsername == username) {
+			outFile << newContent << endl; // Replace the line
+		} 
+		else {
+			outFile << line << endl;
+		}
+	}
+
+	inFile.close();
+	outFile.close();
+
+	remove(filename.c_str());
+	rename("temp.csv", filename.c_str());
+}
+
 
 
 ////////////////////////////////////////////////////////////////
@@ -295,6 +336,7 @@ void SistemaLogin::mostrarInformacionUsuarios() const
 		cout << "Nombre Completo: " << par.second->getNombreCompleto() << endl;
 		cout << "Email: " << par.second->getEmail() << endl;
 		cout << "Numero de Telefono: " << par.second->getNumeroTelefono() << endl;
+		cout << "Hash: " << par.second->getHashContrasena() << endl;
 		// No imprimimos la contraseña por razones de seguridad
 		cout << "------------------------" << endl;
 		}
@@ -319,12 +361,12 @@ void SistemaLogin::eliminarInformacionDelMap()
 }
 
 
-bool SistemaLogin::registrarUsuarioAlArchivo(const string& filename, const string& username, const string& plainPassword, Usuario* nuevoUsuario)
+bool SistemaLogin::registrarUsuarioAlArchivo(const string& filename, const string& username, const string& plainPassword, Usuario* usuarioActivo)
 {
 
 	bool success;
 	
-	if(verificarUsuarioNoRepetidoDataBase(filename,nuevoUsuario))
+	if(verificarUsuarioNoRepetidoDataBase(filename,usuarioActivo))
 	{
 		// Se abre el archivo con ofstream en modo edicion, 
 		// y para escribir en la ultima linea usamos ios::app
@@ -338,14 +380,14 @@ bool SistemaLogin::registrarUsuarioAlArchivo(const string& filename, const strin
 
 		//hasheamos la contrasena en registrar usuario, de tal modo que el metodo es privado
 		string hash = hashContrasena(plainPassword);
-		nuevoUsuario->setHashContrasena(hash);
+		usuarioActivo->setHashContrasena(hash);
 
 		//el contra-slash n se usa para escribir en la linea mas abajo del archivo
-		archivoCambiado <<"\n"<< nuevoUsuario->getNombreCompleto() 
-		<< "," << nuevoUsuario->getNombreUsuario() 
-		<< "," << nuevoUsuario->getEmail() 
-		<< "," << nuevoUsuario->getNumeroTelefono() 
-		<< "," << nuevoUsuario->getHashContrasena() << endl;
+		archivoCambiado <<"\n"<< usuarioActivo->getNombreCompleto() 
+		<< "," << usuarioActivo->getNombreUsuario() 
+		<< "," << usuarioActivo->getEmail() 
+		<< "," << usuarioActivo->getNumeroTelefono() 
+		<< "," << usuarioActivo->getHashContrasena() << endl;
 		success = true;
 		
 	}
@@ -418,7 +460,7 @@ bool SistemaLogin::verificarCredenciales(const string& user,  string& pass)
 	return success;
 }
 
-// Probar implementacion de cerrarSesion()  y cambiarContrasena()
+// PROBAR IMPLEMENTACION DE cambiarContrasena()
 bool SistemaLogin::cerrarSesion()
 {
 	if (usuarioActivo) {
@@ -437,6 +479,9 @@ bool SistemaLogin::cambiarContrasena(const string &oldPass, const string &newPas
 	{
 		string hashNuevo = BCrypt::generateHash(newPass);
 		usuarioActivo->setHashContrasena(hashNuevo);
+		
+		overwriteSpecificLineInFile("users.csv", usuarioActivo->getNombreUsuario());
+		cout << "✓ Contraseña cambiada exitosamente.\n";
 		return true;
 	}
 	return false;
@@ -449,7 +494,7 @@ bool SistemaLogin::restablecerContrasena()
 		return false;
 	}
 
-	string username, email, newPassword;
+	string username, email;
 	
 	// Step 1: Verify user exists
 	cout << "Ingrese su nombre de usuario: ";
@@ -473,14 +518,22 @@ bool SistemaLogin::restablecerContrasena()
 		cerr << "Email no coincide.\n";
 		return false;
 	}
+	
+	srand(time(0)); // Seed for random number generation
+	int randNum = rand() % 1000; // Random number for temporary password
 
 	// Step 3: Generate temporary password (simple approach)
-	string tempPassword = "temp_" + to_string(rand() % 1000);
-	cout << "\nTu contraseña temporal es: " << tempPassword 
+	string tempPassword = "temp_" + to_string(randNum);
+	cout << "\nTu contraseña temporal es: " << tempPassword
 		<< "\nCámbiala inmediatamente después de iniciar sesión.\n\n";
 
 	// Step 4: Update password (using existing cambiarContrasena)
 	user->setHashContrasena(hashContrasena(tempPassword));
+	
+	//revisar este pedazo, porque no se si funciona. 
+	//En caso de que funcione, tendria las 3 ultimas funciones completas :)
+	overwriteSpecificLineInFile("users.csv", username);
+
 	
 	cout << "✓ Contraseña restablecida. Inicia sesión con la temporal.\n";
 	return true;
