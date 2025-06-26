@@ -40,7 +40,11 @@ class SistemaLogin {
   		//Por ejemplo, si el usuario cambia su contrasena, se sobreescribe la
   		//linea del usuario en el archivo, con la nueva contrasena.
   		//Esto se hace para que no se creen lineas repetidas en el archivo.
-		void overwriteSpecificLineInFileActiveUser(const string& filename, const string& username);
+		void overwriteSpecificLineInFileUserOn(const string& filename, const string& username);
+
+		// funcion que hace lo mismo de arriba, pero para usuarios inactivos
+		// o sea, usuarios que cerraron sesion y olvidaron su contrasena
+		void overwriteSpecificLineInFileUserOff(const string& filename, const string& username, const string& hashContrasenaTemporal);
 
 	public:
 		SistemaLogin();

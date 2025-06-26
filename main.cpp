@@ -42,8 +42,9 @@ int main()
 	/*
 	-AGREGAR IMPLEMENTACION DE API PARA VALIDACION DE NUMEROTELEFONICO Y CORREO
 	(REVISAR EL CURSO DE APIS DE FREECODEORG EN INGLES)
+
 	-VERIFICAR QUE RESTABLECER CONTRASENA 
-	FUNCIONEN CORRECTAMENTEERIFICAR QUE CERRAR SESION,
+	FUNCIONEN CORRECTAMENTE (LA TERMINO MANANA PORQUE HOY LA EMPECE)
 	
 	//en la funcion registrarUsuario(...) nos encargamos de hashear la contrasena
 	if(sistema.registrarUsuarioAlArchivo("users.csv", nombreUser, password,  nuevoUsuarioPrueba))
@@ -114,11 +115,6 @@ int main()
 
 	cout<<"Olvidaste tu contrasena? No hay problema, puedes restablecerla."<<endl;
 	sistema.restablecerContrasena();
-
-	
-
-
-
 
 	sistema.eliminarInformacionDelMap();
 	

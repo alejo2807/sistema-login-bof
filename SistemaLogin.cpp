@@ -264,7 +264,7 @@ bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Us
 	return true;
 }
 
-void SistemaLogin::overwriteSpecificLineInFileActiveUser(const string &filename, const string &username)
+void SistemaLogin::overwriteSpecificLineInFileUserOn(const string &filename, const string &username)
 {
 	ifstream inFile(filename);
 	ofstream outFile("temp.csv");
@@ -303,7 +303,42 @@ void SistemaLogin::overwriteSpecificLineInFileActiveUser(const string &filename,
 
 }
 
-
+void SistemaLogin::overwriteSpecificLineInFileUserOff(const string &filename, const string &username, const string &hashContrasenaTemporal)
+{
+	
+	ifstream inFile(filename);
+	ofstream outFile("temp.csv");
+	string lineaProcesada;
+	
+	
+	while(getline(inFile, lineaProcesada))
+	{
+		//hallamos los indices de 3 comas de la base de datos
+		size_t firstComma = lineaProcesada.find(',');
+		size_t secondComma = lineaProcesada.find(',', firstComma + 1);
+		string fileUsername = lineaProcesada.substr(firstComma + 1, secondComma - firstComma - 1);
+		//coma del hash
+		size_t fourthComma = lineaProcesada.find_last_of(',');	
+		
+		if (fileUsername == username) 
+		{
+			//Conservamos todo hasta la última coma
+			string nuevaLinea = lineaProcesada.substr(0, fourthComma + 1);
+			nuevaLinea += hashContrasenaTemporal;
+			outFile << nuevaLinea << endl;
+		}
+		
+		else outFile << lineaProcesada << endl; // Si no es el usuario, escribe la línea original
+		
+	}
+	
+	inFile.close();
+	outFile.close();
+	
+	filesystem::remove(filename); // Elimina el archivo original
+	filesystem::rename("temp.csv", filename); // Renombra el archivo temporal al nombre original
+	
+}
 
 ////////////////////////////////////////////////////////////////
 
@@ -482,8 +517,8 @@ bool SistemaLogin::cambiarContrasena(const string &oldPass, const string &newPas
 	{
 		string hashNuevo = BCrypt::generateHash(newPass);
 		usuarioActivo->setHashContrasena(hashNuevo);
-		
-		overwriteSpecificLineInFileActiveUser("users.csv", usuarioActivo->getNombreUsuario());
+
+		overwriteSpecificLineInFileUserOn("users.csv", usuarioActivo->getNombreUsuario());
 		cout << "✓ Contraseña cambiada exitosamente.\n";
 		return true;
 	}
@@ -530,13 +565,9 @@ bool SistemaLogin::restablecerContrasena()
 	cout << "\nTu contraseña temporal es: " << tempPassword
 		<< "\nCámbiala inmediatamente después de iniciar sesión.\n\n";
 
-	// Step 4: Update password (using existing cambiarContrasena)
-	user->setHashContrasena(hashContrasena(tempPassword));
-	
-	//revisar este pedazo, porque no se si funciona. 
-	//En caso de que funcione, tendria las 3 ultimas funciones completas :)
-	//overwriteSpecificLineInFile("users.csv", username);
-
+	// Step 4: Update password and overwrite file from the outside
+	string hashContrasenaRestablecida = hashContrasena(tempPassword);
+	overwriteSpecificLineInFileUserOff("users.csv", username, hashContrasenaRestablecida);
 	
 	cout << "✓ Contraseña restablecida. Inicia sesión con la temporal.\n";
 	return true;
