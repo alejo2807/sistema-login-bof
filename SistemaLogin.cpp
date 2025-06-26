@@ -4,12 +4,14 @@
 #include <map> 
 #include <fstream> // Para manejar archivos, usamos ifstream y ofstream
 #include <sstream> // Para usar stringstream, istringstream y ostringstream 
-//sringstream es el dispensador, istringstream es la cajita de dulces parecida al dispensador
+//stringstream es el dispensador, istringstream es la cajita de dulces parecida al dispensador
 //y ostringstream es como el constructor que une palabras en una misma linea
 #include <vector>
 
 #include <cstdlib>// para rand() y srand()
 #include <ctime>// para time()
+
+#include <filesystem> // libreria que agregue para  hacer la linea 300 mas moderna y simple
 
 //para el algoritmo de criptografia bcrypt (hashear contrasena)
 #include "libbcrypt/include/BCrypt.hpp"  // Now points to the correct path!
@@ -262,7 +264,7 @@ bool SistemaLogin::verificarUsuarioNoRepetidoDataBase(const string &filename, Us
 	return true;
 }
 
-void SistemaLogin::overwriteSpecificLineInFile(const string &filename, const string &username)
+void SistemaLogin::overwriteSpecificLineInFileActiveUser(const string &filename, const string &username)
 {
 	ifstream inFile(filename);
 	ofstream outFile("temp.csv");
@@ -295,8 +297,10 @@ void SistemaLogin::overwriteSpecificLineInFile(const string &filename, const str
 	inFile.close();
 	outFile.close();
 
-	remove(filename.c_str());
-	rename("temp.csv", filename.c_str());
+	//aqui usaremos la libreria filesystem porque es mas moderna
+	std::filesystem::remove(filename); // Elimina el archivo original
+	std::filesystem::rename("temp.csv", filename); // Renombra el archivo temporal al nombre original
+
 }
 
 
@@ -460,7 +464,6 @@ bool SistemaLogin::verificarCredenciales(const string& user,  string& pass)
 	return success;
 }
 
-// PROBAR IMPLEMENTACION DE cambiarContrasena()
 bool SistemaLogin::cerrarSesion()
 {
 	if (usuarioActivo) {
@@ -480,7 +483,7 @@ bool SistemaLogin::cambiarContrasena(const string &oldPass, const string &newPas
 		string hashNuevo = BCrypt::generateHash(newPass);
 		usuarioActivo->setHashContrasena(hashNuevo);
 		
-		overwriteSpecificLineInFile("users.csv", usuarioActivo->getNombreUsuario());
+		overwriteSpecificLineInFileActiveUser("users.csv", usuarioActivo->getNombreUsuario());
 		cout << "✓ Contraseña cambiada exitosamente.\n";
 		return true;
 	}
@@ -532,9 +535,11 @@ bool SistemaLogin::restablecerContrasena()
 	
 	//revisar este pedazo, porque no se si funciona. 
 	//En caso de que funcione, tendria las 3 ultimas funciones completas :)
-	overwriteSpecificLineInFile("users.csv", username);
+	//overwriteSpecificLineInFile("users.csv", username);
 
 	
 	cout << "✓ Contraseña restablecida. Inicia sesión con la temporal.\n";
 	return true;
 }
+
+
