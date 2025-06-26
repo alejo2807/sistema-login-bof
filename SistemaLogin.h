@@ -40,7 +40,7 @@ class SistemaLogin {
   		//Por ejemplo, si el usuario cambia su contrasena, se sobreescribe la
   		//linea del usuario en el archivo, con la nueva contrasena.
   		//Esto se hace para que no se creen lineas repetidas en el archivo.
-		void overwriteSpecificLineInFile(const string& filename, const string& username);
+		void overwriteSpecificLineInFileActiveUser(const string& filename, const string& username);
 
 	public:
 		SistemaLogin();
@@ -60,6 +60,7 @@ class SistemaLogin {
 		//elimine la fn bool estaConectado. No la vi necesaria, pues el mensaje lo dejo en iniciarSesion()
 		bool cambiarContrasena(const string& oldPass, const string& newPass);
 		//en restablecler contrasena usamos el email escondido (maskEmail)
+		//esta funcion se realiza desde afuera del sistema
 		bool restablecerContrasena();
 
 };
